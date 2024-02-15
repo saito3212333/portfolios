@@ -13,19 +13,30 @@ class ReEngine:
         print()
         print("RESULT FOR: 'three'")
         print(result)
+        # re.findall(pattern, string, flags=0)
+        # pattern: 検索する正規表現パターンを指定します。
+        # string: 検索対象の文字列を指定します。
+        # flags: オプションのフラグを指定します。例えば、大文字小文字を無視する場合は re.I を指定します。
 
-        # Find the tokens 'ral' or 'nal'
+        # re.findall() は、指定された文字列内のすべてのマッチをリストとして返します。
+        # もし正規表現パターン内にキャプチャグループがある場合、
+        # そのグループ内のマッチのみがリストに追加されます。
+
+        # Find the tokens 'ral' or 'nal'簡単やな[abc] a or b or c
         result = re.findall('[rn]al', text1, re.I)
         print()
         print("RESULT FOR: '[rn]al'")
         print(result)
 
         # Find Banada at the beginning of the string
+        # ^ この正規表現は、文字列の先頭が "Banada" であるかどうかを検索します。
+
         result = re.findall('^Banada', text1, re.I)
         print()
         print("RESULT FOR: '^Banada'")
         print(result)
 
+        # . は任意の文字列１つ　ということは　...は３文字の任意の文字列
         # Find tokens that contain th and any three characters
         result = re.findall('th...', text1, re.I)
         print()
@@ -33,17 +44,20 @@ class ReEngine:
         print(result)
 
         # Find tokens that contain th and three alpha characters
+        # 文字である、文字がa-zもしくはA-Zであるという意味ですね。
         result = re.findall('th[a-zA-Z][a-zA-Z][a-zA-Z]', text1, re.I)
         print()
         print("RESULT FOR: 'th[a-zA-Z][a-zA-Z][a-zA-Z]'")
         print(result)
 
         # Find tokens that contain th and three alpha characters
+        #１個前のやつかける３みたいな感じかな
         result = re.findall('th[a-zA-Z]{3}', text1, re.I)
         print()
         print("RESULT FOR: 'th[a-zA-Z]{3}'")
         print(result)
 
+        #　[a-zA-Z]+ : 1文字以上のアルファベットにマッチします。
         # Find tokens that contain th and one or more alpha characters
         result = re.findall('th[a-zA-Z]+', text1, re.I)
         print()
@@ -52,11 +66,14 @@ class ReEngine:
 
         # Find tokens that contain th at the beginning, e at the end and one or
         # more alpha characters in between
+        # この正規表現は、th で始まり、その後に1文字以上のアルファベットがあり、
+        # 最後が e で終わる文字列にマッチする
         result = re.findall('th[a-zA-Z]+e', text1, re.I)
         print()
         print("RESULT FOR: 'th[a-zA-Z]+e'")
         print(result)
 
+        # ｜はORです。あとは二つの文を１セットとして囲むことが大事です。
         # Find tokens that begin with th or d and have one of more trailing alpha character
         result = re.findall('th[a-zA-Z]+|d[a-zA-Z]+', text1, re.I)
         print()
@@ -64,11 +81,14 @@ class ReEngine:
         print(result)
 
         # Find tokens that begin with b and end with r with only alpha characters in between.
+
+        # 要するに\bだとその単語で始まる終わるを意味する。何かとの複合で呼び出しがされない。
         result = re.findall(r'\bc[a-zA-Z]+y\b', text1, re.I)
         print()
         print("RESULT FOR: '\bc[a-zA-Z]+y\b'")
         print(result)
 
+        # \S+: 1文字以上の非空白文字にマッチします。なんやそれ絶対わからんし使えんわ
         # Find tokens that begin with b and end with r with non-whitespace chars in between.
         result = re.findall(r'\bc\S+y\b', text1, re.I)
         print()
@@ -78,17 +98,26 @@ class ReEngine:
     def doEx1(self):
         text1 = "The phone number's +1902344322."
 
+        # [a-zA-Z0-9]: 英数字（大文字または小文字）にマッチします。
+        # +: 直前のパターンが 1 回以上繰り返されることを示します。
+        # したがって、この正規表現は、テキスト内の英数字の連続した部分文字列にマッチします。
         result = re.findall(r'[a-zA-Z0-9]+', text1, re.I)
+        # result = re.findall(r'[0-9]+', text1, re.I)
         print()
         print("RESULT FOR: '[a-zA-Z0-9]+'")
         print(result)
 
+        # \d: 任意の数字にマッチします
         text1 = "The phone number's +1902344322."
         result = re.findall(r'\d', text1, re.I)
         print()
         print("RESULT FOR: '\d'")
         print(result)
 
+        # \d*: 数字が 0 回以上繰り返されることを示します。
+        # .: 任意の文字にマッチします（ただし改行文字を除く）。
+        # \d{3}: 数字がちょうど 3 回繰り返されることを示します。
+        # {} と*の違いは？　＊は０回以上　それじゃなくてもいいし、どっちでもいい
         text1 = "1902344322 87g212 g213 g32 89 gg234."
         result = re.findall(r'\d*.\d{3}', text1, re.I)
         print()
@@ -102,18 +131,24 @@ class ReEngine:
         print(result)
 
         text1 = "1902344'3223 87g212 g213 g32 89 gg234."
+        # \はただのエスケープ用なので気にしないでください。
         result = re.findall(r'[a-z0-9\.@#\$%&]+', text1, re.I)
         print()
         print("RESULT FOR: '[a-z0-9\.@#\$%&]+'")
         print(result)
 
-
+        # Sは空白文字（スペース、タブ、改行）
+        # {6,20}: 直前の文字クラスが6文字以上20文字以下の連続した文字列にマッチすることを指定します。
+        # []で文字を指定して{n}それがn回続くのをとってこいという命令
         text1 = "1902344'3223 ds87g212 g213 g32 89 gg234."
         result = re.findall(r'[a-zA-Z0-9\s]{6,20}', text1, re.I)
         print()
         print("RESULT FOR: '[a-zA-Z0-9\s]{6,20}")
         print(result)
 
+        # Sは空白文字（スペース、タブ、改行）
+        # [a-zA-Z0-9_]: \w はこの文字クラスと一緒　何こいつ、めっちゃ便利やん
+        # ただ、.は含まないから、エスケープきーと一緒に追加してるんか。
         text1 = "https://en.wikipedia.com/wiki/Canada says Canada sucks. However, https://www.torontosom.com"
         result = re.findall(r'https:/{2}[\w\.]+[.]com', text1, re.I)
         print()
@@ -135,7 +170,9 @@ class ReEngine:
         <script>(RLQ=window.RLQ||[]).push(function(){mw.loader.impl(function(){return["user.options@12s5i",function($,jQuery,require,module){mw.user.tokens.set({"patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
         }];});});</script>
                 """
-
+        # この正規表現パターンは、HTMLまたはXMLタグ（開始タグや終了タグ）を抽出するために使用されます。
+        # それぞれの部分を説明します.
+        # 気にするな。そういうものだ。
         result = re.findall(r'</?[\w\s]*>|<.+[\W]>', text1, re.I)
         print()
         print("RESULT FOR: '</?[\w\s]*>|<.+[\W]>")
