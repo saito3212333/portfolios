@@ -1,10 +1,9 @@
 import collections
 import re
 import string
-import urllib.request
+import requests
 
 import nltk
-import numpy as np
 import wordcloud
 from nltk import stem
 from nltk.corpus import stopwords
@@ -14,12 +13,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 class InformationRetrievalEngine:
     sms_corpus = []
     stopWords = []
-    
+
     def __init__(self):
-        with urllib.request.urlopen("https://storage.googleapis.com/wd13/SMSSpamCollection.txt") as url:
-            for line in url.readlines():
-                # print(type(line))
-                self.sms_corpus.append(line.decode().split('\t'))
+        response = requests.get("https://storage.googleapis.com/wd13/SMSSpamCollection.txt")
+        for line in response.text.splitlines():
+            self.sms_corpus.append(line.split('\t'))#これはTABね
 
         self.getStopWords()
     
@@ -78,15 +76,15 @@ class InformationRetrievalEngine:
 
     def calculate_sms_word_frequencies(self, type='all'):
         selected_msgs = []
-        match type.lower():
-            case 'all':
-                selected_msgs = self.sms_corpus
-            case 'ham':
-                selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'ham']
-            case 'spam':
-                selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'spam']
-            case _:
-                selected_msgs = self.sms_corpus
+        type_lower = type.lower()
+        if type_lower == 'all':
+            selected_msgs = self.sms_corpus
+        elif type_lower == 'ham':
+            selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'ham']
+        elif type_lower == 'spam':
+            selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'spam']
+        else:
+            selected_msgs = self.sms_corpus
 
         msgs_text = [msg[1] for msg in selected_msgs]
         text = " ".join(msgs_text)
@@ -96,15 +94,16 @@ class InformationRetrievalEngine:
 
     def calculate_sms_word_frequencies2(self, type='all', stemmed=False, withoutStopWords=False):
         selected_msgs = []
-        match type.lower():
-            case 'all':
-                selected_msgs = self.sms_corpus
-            case 'ham':
-                selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'ham']
-            case 'spam':
-                selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'spam']
-            case _:
-                selected_msgs = self.sms_corpus
+        type_lower = type.lower()
+        if type_lower == 'all':
+            selected_msgs = self.sms_corpus
+        elif type_lower == 'ham':
+            selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'ham']
+        elif type_lower == 'spam':
+            selected_msgs = [msg for msg in self.sms_corpus if msg[0] == 'spam']
+        else:
+            selected_msgs = self.sms_corpus
+        return selected_msgs
 
         msgs_text = [msg[1] for msg in selected_msgs]
         text = " ".join(msgs_text)
@@ -250,30 +249,30 @@ class InformationRetrievalEngine:
                   fontweight="bold")
         plt.show()
 
-    def generateSMSWordClouds(self):
-        # Frequency and wordcloud for all SMSs
-        freq_all = self.calculate_sms_word_frequencies2('all', False, False)
-        print(freq_all)
-        self.generateWordCloud(freq_all, "D:\\sms_all_noStemming_withStops.png")
-
-        # Frequency and wordcloud for all SMSs
-        freq_all = self.calculate_sms_word_frequencies2('all', False, True)
-        print(freq_all)
-        self.generateWordCloud(freq_all, "D:\\sms_all_noStemming_noStops.png")
-
-
-        freq_all = self.calculate_sms_word_frequencies2('spam', False, True)
-        print(freq_all)
-        self.generateWordCloud(freq_all, "D:\\sms_SPAM_noStemming_noStops.png")
-
-        freq_all = self.calculate_sms_word_frequencies2('ham', False, True)
-        print(freq_all)
-        self.generateWordCloud(freq_all, "D:\\sms_HAM_noStemming_noStops.png")
+    # def generateSMSWordClouds(self):
+    #     # Frequency and wordcloud for all SMSs
+    #     freq_all = self.calculate_sms_word_frequencies2('all', False, False)
+    #     print(freq_all)
+    #     self.generateWordCloud(freq_all, "D:\\sms_all_noStemming_withStops.png")
+    #
+    #     # Frequency and wordcloud for all SMSs
+    #     freq_all = self.calculate_sms_word_frequencies2('all', False, True)
+    #     print(freq_all)
+    #     self.generateWordCloud(freq_all, "D:\\sms_all_noStemming_noStops.png")
+    #
+    #
+    #     freq_all = self.calculate_sms_word_frequencies2('spam', False, True)
+    #     print(freq_all)
+    #     self.generateWordCloud(freq_all, "D:\\sms_SPAM_noStemming_noStops.png")
+    #
+    #     freq_all = self.calculate_sms_word_frequencies2('ham', False, True)
+    #     print(freq_all)
+    #     self.generateWordCloud(freq_all, "D:\\sms_HAM_noStemming_noStops.png")
 
 
 ire1 = InformationRetrievalEngine()
-#ire1.demonstrateIR()
+ire1.demonstrateIR()
 #ire1.do_ex_1()
 #ire1.demonstrateBIR()
 #ire1.demonstrateTDIF()
-ire1.generateSMSWordClouds()
+# ire1.generateSMSWordClouds()
