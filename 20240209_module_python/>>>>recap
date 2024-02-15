@@ -9,5 +9,10 @@ day9
 day10 正規表現
     htmlの正規表現パターン　Line 173
 
-day11 webスクレイピンg
+day11 ir_webスクレイピンぐ
     全体的にスクレイピングするためのもの。
+
+day11 re_sentiments
+    mailを取得する正規表現　line 68
+    TELを取得する正規表現　line 82
+    subの解説　line 152
