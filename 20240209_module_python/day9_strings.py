@@ -8,14 +8,19 @@ import pandas as pd
 class ExEngine:
     def do_df_ex(self):
         """Using mallC, answer the following questions:"""
-        mallC = pd.read_csv(".\\Data\\Mall_Customers.csv")
+        # windows .\\___\\
+        mallC = pd.read_csv("./data/Mall_Customers.csv")
         pd.set_option('display.max_rows', None)
         pd.set_option('display.max_columns', None)
-        print(mallC)
+        print(mallC.head())
+        print(mallC.shape)
 
         """Add a column call annual_income_usd by multiplying the existing Annual Income column by 1000. """
+        # 直接５個列の名前を指定してあげて名前の変更、
         mallC.columns = ['CustomerID', 'Gender', 'Age', 'Annual_Income_k_USD', 'Spending_Score']
         print("####Q1####")
+
+        # 新しい列を追加していますね。
         mallC["annual_income_usd"] = mallC.Annual_Income_k_USD * 1000
         print(mallC.head())
 
@@ -29,45 +34,54 @@ class ExEngine:
         print(mallC.sort_values("Annual_Income_k_USD").head(20))
 
         print()
+        print("####Q1-1####")
         """Generate and print another dataframe listing all the female customers who's age is greater than or equal to 40."""
         mallC_f_gt_40 = mallC[list(mallC.Age >= 40) and list(mallC.Gender == 'Female')]
+
+        # 条件式ですね。
         mallC_f_gt_40 = mallC[(mallC.Age >= 40) & (mallC.Gender == 'Female')]
-        print(mallC_f_gt_40)
+        print(mallC_f_gt_40.head())
 
         print()
+
+        # インサートと直接入れるやつの違いは、何列目に入れるか指定できる、明示的にわかりやすい、
         """Add another variable called 'spend_index' whereas spend_index = spending score / annual income. """
         mallC.insert(loc=6, column="spend_index", value=mallC.Spending_Score / mallC.Annual_Income_k_USD)
         print(mallC.head())
 
-        print()
+
         """Generate and print another dataframe listing all the male customers who's age is greater than or equal to 40 and annual income is '
                                                                                 'above the 75th percentile of the range.)"""
+        # パーセンタイルを０.７５を算出
         income75 = numpy.percentile(mallC.Annual_Income_k_USD, 0.75)
+        print(income75)
+
+        # ３つの条件式の条件式ですね。
         mallCm_gt_40 = mallC[(mallC.Age >= 40) & (mallC.Gender == 'Male') &
                              (mallC.Annual_Income_k_USD > income75)]
-        print(mallCm_gt_40)
+        print(mallCm_gt_40.head())
 
         print()
         """Add another variable called 'income_outlier' which is a flag (True/ False) to indicate if the income value is an outlier in the range. 
         Use the standard IQR based calculation to determine the outliers and populate the income_outlier column. """
         incomeQ3 = numpy.percentile(mallC.Annual_Income_k_USD, 0.75)
         incomeQ1 = numpy.percentile(mallC.Annual_Income_k_USD, 0.25)
+        # 出た、IQR　と外れ値
         incomeIQR = incomeQ3 - incomeQ1
         mallC["income_outlier"] = ((mallC.Annual_Income_k_USD < incomeQ1 - 1.5 * incomeIQR)
                                    | (mallC.Annual_Income_k_USD > incomeQ3 + 1.5 * incomeIQR))
         print(mallC.head())
-        print(mallC[mallC.income_outlier == True])
+        print(mallC[mallC.income_outlier == True].head())
 
         print()
         """For each observation, print the following if the customer is female, under 25 of age, and spend index is greater than or equal to 1.00.
         Customer <ID> is a Potential Female Candidate with a spend index <spend_index>"""
         print()
-
+        # i がインデックス　jがオブザベーションが縦になって返ってくる
         for i, j in mallC.iterrows():
             if (j["spend_index"] >= 1 and j["Gender"] == 'Female' and j["Age"] < 25):
                 print("Customer", j["CustomerID"], " is a Potential Female Candidate with a spend index ",
                       round(j["spend_index"], 2))
-
 
 class StringEngine:
     def recapStringBasics(self):
@@ -285,7 +299,7 @@ class StringEngine:
 
 
 ee2 = ExEngine()
-#ee2.do_df_ex()
-se1 = StringEngine()
+ee2.do_df_ex()
+#se1 = StringEngine()
 #se1.recapStringBasics()
-se1.doTokenTask()
+#se1.doTokenTask()
